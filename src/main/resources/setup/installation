@@ -1,0 +1,5 @@
+To create jar: mvn package
+Add java in system and user path
+To create as a service: use winsw
+Create service folder that will contain the jar and the necessary winsw files (exe and xml)
+run admin cmd and exec: winsx.exe intall
