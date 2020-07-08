@@ -9,20 +9,20 @@ import java.nio.file.Paths;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.smart.home.pc.daemon.dto.Command;
 import com.smart.home.pc.daemon.dto.FullConfiguration;
-import com.smart.home.pc.daemon.impl.Daemon;
 import com.smart.home.pc.daemon.service.SimpleCustomTasks;
 
 public class SimpleCustomTasksImpl implements SimpleCustomTasks {
 	
 
-	public void shutdown(FullConfiguration configuation) throws RuntimeException, IOException {
+	public void executeCommand(FullConfiguration configuation, Command command) throws RuntimeException, IOException {
 		String operatingSystem = System.getProperty("os.name");
 		if ("Linux".equals(operatingSystem) || "Mac OS X".equals(operatingSystem)) {
 			String shutdownCommand = "shutdown -h now";
 			Runtime.getRuntime().exec(shutdownCommand);
 		} else if (isWindowsOS(operatingSystem)) { // Windows
-			executWindowsProcedure(configuation);
+			executWindowsProcedure(configuation, command);
 		} else {
 			System.err.println("Unsupported operating system.");
 		}
@@ -45,12 +45,12 @@ public class SimpleCustomTasksImpl implements SimpleCustomTasks {
 	 * Will perform the windows tasks, and will attempt multiple times before
 	 * stopping attempt
 	 */
-	private void executWindowsProcedure(FullConfiguration configuration) {
+	private void executWindowsProcedure(FullConfiguration configuration, Command command) {
 		int maxAttempts = 5;
 		int attempts = 0;
 		boolean processInSuccess = false;
 		while (!processInSuccess && attempts < maxAttempts) {
-			processInSuccess = executeBatchInBatchDir("sleep.bat", configuration);
+			processInSuccess = executeBatchInBatchDir(command.getScript(), configuration);
 			attempts++;
 			sleep(5000);
 		}

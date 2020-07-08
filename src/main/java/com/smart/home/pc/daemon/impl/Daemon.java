@@ -4,23 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
-import org.apache.commons.lang3.StringUtils;
-
+import com.smart.home.pc.daemon.dto.Command;
 import com.smart.home.pc.daemon.dto.FullConfiguration;
 import com.smart.home.pc.daemon.service.SimpleCustomTasks;
 import com.smart.home.pc.daemon.service.impl.SimpleCustomTasksImpl;
 
 public class Daemon {
 
-	private static final String SHUTDOWN_FILE_COMMAND = "shutdown-bedroom"; // file name that triggers an action
-
-	private static final String SHUTDOWN_COMMAND = "SHUTDOWN"; // TODO: enum or configurable
-
 	private static final Date PROC_START_DATE = new Date();
-
-	// private String absHomeDir;
-
-	// private String scriptDirName;
 
 	private String commandDirAbsPath;
 
@@ -29,8 +20,6 @@ public class Daemon {
 	private FullConfiguration configuration;
 
 	public Daemon(FullConfiguration configuration) {
-		// absHomeDir = configuration.getAbsPathHomeFolder();
-		// scriptDirName = configuration.getUserConfiguration().getScriptDir();
 		commandDirAbsPath = configuration.getUserConfiguration().getCommandPath();
 		simpleCustomTasks = new SimpleCustomTasksImpl();
 		this.configuration = configuration;
@@ -41,15 +30,13 @@ public class Daemon {
 		initProc();
 
 		// Run proc
-		String command = getCommand();
-		if (!StringUtils.isEmpty(command)) {
-			// Check which command and perform action
-			if (SHUTDOWN_COMMAND.equals(command)) {
-				// Delete command
-				deleteAllFiles(SHUTDOWN_FILE_COMMAND);
+		Command command = getCommand();
+		if (command != null) {
+				// Delete files associated to this command
+				deleteAllFiles(command.getFileName());
 				// Execute shutdown action
-				simpleCustomTasks.shutdown(configuration);
-			}
+				simpleCustomTasks.executeCommand(configuration, command);
+			
 		}
 
 		// Final proc
@@ -70,7 +57,6 @@ public class Daemon {
 					if (PROC_START_DATE.after(fileLastModified)) {
 						currentFile.delete();
 					}
-
 				}
 			}
 		}
@@ -81,9 +67,9 @@ public class Daemon {
 	 * file name located in special directory if specific file is detected we return
 	 * the underlying action to perform
 	 * 
-	 * @return String : action to be performed
+	 * @return Command : command to be performed
 	 */
-	private String getCommand() {
+	private Command getCommand() {
 
 		// Directory exists we check files inside
 		File[] listOfFiles = getFilesInCommandDirLocation();
@@ -91,16 +77,16 @@ public class Daemon {
 			return null;
 		}
 
-		// Loop in file list and we will check if one of them is OK
+		// Check if there is a trigger file in the directory
 		for (int i = 0; i < listOfFiles.length; i++) {
-
-			if (listOfFiles[i].isFile()) {
-				if (listOfFiles[i].getName().contains(SHUTDOWN_FILE_COMMAND)) {
-					return SHUTDOWN_COMMAND;
-				}
+			if (listOfFiles[i].isFile()) { // Make sure it's a file and not a dir				
+				for(Command currentCommand : configuration.getUserConfiguration().getCommands()) {
+					if (currentCommand.getFileName() != null && listOfFiles[i].getName().contains(currentCommand.getFileName())) {
+						return currentCommand; // TODO: list of commands ?
+					}
+				}				
 			}
 		}
-
 		return null;
 	}
 
