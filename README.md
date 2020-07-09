@@ -11,30 +11,57 @@ What I discovered after some research was:
 
 # Installation and setup
 
-1) Requirements
+## Requirements
 
 - Java version >= 8
 - Windows 10 (not tested for prior versions but should work)
-- WinSW (https://github.com/winsw/winsw/releases), this will allow us to run the jar as a windows service
 
-Note: currently WinSW is a requirement as this is how I make sure the jar is executed when the machine reboots, feel free to use alternative solutions !
 
-2) Windows
+## Windows
 
-Steps:
+### Steps:
+
 - Place jar in a desired location (ex: C:/myDir)
-- Create a config.json file in C:/myDir (see example below)
-- Create the folder that will contain the scripts (name is configurable)
-- Create the folder that will be checked for file / commands
-- Create the scripts that you want to be executed when a command is detected
+- Create a config.json file in C:/myDir/config.json
+- Create the folder that will contain the C:/myDir/scripts
+- Create the folder that will be checked by the app: C:/myDir/commands
+- Create a batch that will run the jar: C:/myDir/run-jar.bat
 - Install the windows service that will execute the jar and start the service (the additional WinSW files should be placed in C:/myDir)
 
-PS: you can manually run the program in a cmd console using the following command: java -jar file-is-my-command.jar
+Optional: you can use WinSW to wrap the jar into a windows service thus not needing the run-jar.bat.
+
+### File example
+
+<h6> run-jar.bat:</h6>
+
+```batch
+REM Move to the batch file location
+REM By default in taskmanager the default dir is in system32
+REM Note: you can specify the location in the action tab in taskscheduler rendering the below line redundant
+cd "%~dp0"
+REM run the jar, absolute path not needed since we are in the correct dir
+java -jar file.is.my.command-1.0-SNAPSHOT.jar
+```
+
+<h6> kill-apps-and-shutdown.bat:</h6>
+
+```batch
+@echo off
+REM kill vlc
+taskkill /F /IM vlc.exe /T
+REM kill chrome
+taskkill /F /IM chrome.exe /T
+REM wait 4 seconds
+ping -n 4 127.0.0.1 > nul
+REM Shutdown windows machine
+shutdown.exe /s /t 00
+```
 
 # Configuration
 
 Here is an example of config.json:
 
+```json
 {
 	"scriptDir": "scripts",
 	"commandPath" : "K:\\fileismycommand\\command",
@@ -42,3 +69,5 @@ Here is an example of config.json:
 		{"fileName": "shutdown-laptop", "script": "sleep.bat"}
 	]
 }
+
+```
