@@ -11,14 +11,15 @@ What I discovered after some research was:
 
 # Installation and setup
 
-1) Requirement
+1) Requirements
 
 - Java version >= 8
 - Windows 10 (not tested for prior versions but should work)
+- WinSW (https://github.com/winsw/winsw/releases), this will allow us to run the jar as a windows service
+
+Note: currently WinSW is a requirement as this is how I make sure the jar is executed when the machine reboots, feel free to use alternative solutions !
 
 2) Windows
-
-The goal is to run this program at the start of your computer, many solutions are available but the simplest I found was to create a custom windows service using WinSW (https://github.com/winsw/winsw/releases) but you can use whatever method you want to acheive this.
 
 Steps:
 - Place jar in a desired location (ex: C:/myDir)
@@ -26,7 +27,9 @@ Steps:
 - Create the folder that will contain the scripts (name is configurable)
 - Create the folder that will be checked for file / commands
 - Create the scripts that you want to be executed when a command is detected
-- Run the jar
+- Install the windows service that will execute the jar and start the service (the additional WinSW files should be placed in C:/myDir)
+
+PS: you can manually run the program in a cmd console using the following command: java -jar file-is-my-command.jar
 
 # Configuration
 
