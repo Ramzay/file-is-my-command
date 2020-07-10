@@ -11,15 +11,18 @@ What I discovered after some research was:
 
 # Installation and setup
 
-## Requirements
+<h3> Requirements </h3>
 
 - Java version >= 8
 - Windows 10 (not tested for prior versions but should work)
 
+<h3> Important notes </h3>
+- Command file will be deleted before executing the associated script (otherwise we would have an infinite loop)
 
-## Windows
 
-### Steps:
+<h3> Windows </h3>
+
+<h4> Setup:</h4>
 
 - Place jar in a desired location (ex: C:/myDir)
 - Create a config.json file in C:/myDir/config.json
@@ -30,20 +33,40 @@ What I discovered after some research was:
 
 Optional: you can use WinSW to wrap the jar into a windows service thus not needing the run-jar.bat.
 
-### File example
+<h4> File hierarchy: </h4>
 
-<h6> run-jar.bat:</h6>
+```
+project
+|   config.json
+|   file.is.my.command-X.X-SNAPSHOT.jar
+|   run-jar.bat
+|   WinSW.NET4.exe (optional)
+|   WinSW.NET4.xml (optional)
+|   
+|
+|___scripts
+	|
+	|_  sleep.bat
+	|_  myCustomScript.bat
+|
+|
+|___commands (put here the files that will trigger command)
+```
+
+<h4> File example: </h4>
+
+<h6> run-jar.bat</h6>
 
 ```batch
 REM Move to the batch file location
-REM By default in taskmanager the default dir is in system32
+REM For admin user default dir is in system32
 REM Note: you can specify the location in the action tab in taskscheduler rendering the below line redundant
 cd "%~dp0"
 REM run the jar, absolute path not needed since we are in the correct dir
 java -jar file.is.my.command-1.0-SNAPSHOT.jar
 ```
 
-<h6> kill-apps-and-shutdown.bat:</h6>
+<h6> sleep.bat</h6>
 
 ```batch
 @echo off
@@ -57,7 +80,7 @@ REM Shutdown windows machine
 shutdown.exe /s /t 00
 ```
 
-# Configuration
+<h3> Configuration </h3>
 
 Here is an example of config.json:
 
