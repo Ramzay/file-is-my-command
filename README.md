@@ -1,13 +1,20 @@
 # file-is-my-command
-Execute commands using file name
+Execute commands using files
 
 # Introduction
 This project came to life when I wanted to control my computer using a voice recognition device (Alexa, Google assist etc.) and discovered the complexity of acheiving such a simple task.
 
 What I discovered after some research was:
-- I need to communicate via files in order to keep things simple and free
+- I needed to communicate via files in order to keep things simple and free
 - Use IFTT to create file in a drive folder (the voice recognition device will trigger IFTT receipes)
-- Have an app that would check the drive folder and execute custom tasks when certain files are found
+- Have an app that would check the drive folder and execute the <strong> desired and allowed </strong> tasks
+
+The goal of this app is to:
+
+- Monitor a folder where we put files in it (FTP, synchronized drive etc.), this folder is referred as <strong> command directory </strong>
+- When we detect that a file is a <strong> command </strong> we will delete the file and then perform the associated <strong> script <script>.
+- All files located in the <strong> command directory </strong> are not necessarly commands, you are free to configure wich file should be considered as a command.
+- For security reasons command files are not executed, we only parse the file name.
 
 # Installation and setup
 
