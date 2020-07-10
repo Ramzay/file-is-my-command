@@ -12,7 +12,7 @@ What I discovered after some research was:
 The goal of this app is to:
 
 - Monitor a folder where we put files in it (FTP, synchronized drive etc.), this folder is referred as <strong> command directory </strong>
-- When we detect that a file is a <strong> command </strong> we will delete the file and then perform the associated <strong> script <script>.
+- When we detect that a file is a <strong> command </strong> we will delete the file and then perform the associated <strong> script </strong>.
 - All files located in the <strong> command directory </strong> are not necessarly commands, you are free to configure wich file should be considered as a command.
 - For security reasons command files are not executed, we only parse the file name.
 
