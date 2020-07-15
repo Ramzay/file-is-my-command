@@ -10,6 +10,8 @@ import java.nio.file.Paths;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.smart.home.pc.daemon.dto.Config;
@@ -18,80 +20,85 @@ import com.smart.home.pc.daemon.impl.Daemon;
 
 public class Application {
 
-	private static final String CONFIGURATION_FILE_NAME = "config.json";
+    private static final Logger LOGGER = LogManager.getLogger(Application.class);
 
-	public static void main(String[] args) throws RuntimeException, IOException, InterruptedException {
-		System.out
-				.println("\n#####################\nStarting application: " + new Date() + "\n#####################\n");
-		// Determine local jar path
-		Path jarAbsolutePath = FileSystems.getDefault().getPath("").toAbsolutePath();
+    private static final String CONFIGURATION_FILE_NAME = "config.json";
 
-		// Check and create configuration file if not found
-		String configPath = jarAbsolutePath.toString() + File.separator + CONFIGURATION_FILE_NAME;
-		Path configFilePath = Paths.get(configPath);
-		File configFile = new File(configPath);
+    public static void main(String[] args) throws RuntimeException, IOException, InterruptedException {
 
-		// Create configuration file
-		if (!configFile.isFile()) {
-			try {
-				configFile.createNewFile();
-			} catch (IOException e) {
-				System.err.println("Could not create the configuration file: " + configFilePath.toString());
-				e.printStackTrace();
-				System.exit(1);
-			}
-		}
+        LOGGER.info("Application start");
+        // Determine local jar path
+        Path jarAbsolutePath = FileSystems.getDefault().getPath("").toAbsolutePath();
 
-		if (configFile.isFile()) {
-			System.out.println("Configuration location: " + configPath);
-		}
+        // Check and create configuration file if not found
+        String configPath = jarAbsolutePath.toString() + File.separator + CONFIGURATION_FILE_NAME;
+        Path configFilePath = Paths.get(configPath);
+        File configFile = new File(configPath);
 
-		// create Gson instance
-		Gson gson = new Gson();
-		Config daemonConfig = new Config();
+        // Create configuration file
+        if (!configFile.isFile()) {
+            try {
+                configFile.createNewFile();
+            } catch (IOException e) {
+                LOGGER.error("Could not create the configuration file: " + configFilePath.toString());
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }
 
-		// create a reader
-		Reader reader;
-		try {
-			reader = Files.newBufferedReader(configFilePath);
+        if (configFile.isFile()) {
+            LOGGER.info("Configuration location: " + configPath);
+        }
 
-			// convert JSON file to map
-			daemonConfig = gson.fromJson(reader, Config.class);
-			reader.close();
+        // create Gson instance
+        Gson gson = new Gson();
+        Config daemonConfig = new Config();
 
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+        // create a reader
+        Reader reader;
+        try {
+            reader = Files.newBufferedReader(configFilePath);
 
-		// Create script directory
-		if (StringUtils.isBlank(daemonConfig.getScriptDir())) {
-			System.out.println("Missing scriptDir property in configuration file. Will be using 'script' dir");
-			daemonConfig.setScriptDir("script");
-		}
-		Path batchPath = Paths.get(jarAbsolutePath + File.separator + daemonConfig.getScriptDir() + File.separator);
-		System.out.println("Script location:" + batchPath);
+            // convert JSON file to map
+            daemonConfig = gson.fromJson(reader, Config.class);
+            reader.close();
 
-		try {
-			Files.createDirectories(batchPath);
-		} catch (IOException e) {
-			System.err.println("Coudln't create directory" + jarAbsolutePath);
-			e.printStackTrace();
-			System.exit(1);
-		}
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
 
-		// Initialise and run Daemon
-		FullConfiguration configuration = new FullConfiguration();
-		configuration.setUserConfiguration(daemonConfig);
-		configuration.setAbsPathHomeFolder(jarAbsolutePath.toString());
-		configuration.setAbsPathScriptFolder(
-				configuration.getAbsPathHomeFolder() + File.separator + daemonConfig.getScriptDir() + File.separator);
-		Daemon deamon = new Daemon(configuration);
+        // Configuration not found we exit the app for now
+        if (daemonConfig == null) {
+            LOGGER.error("Configuration file is either empty or malformed, exiting...");
+            System.exit(1);
+        }
+        // Create script directory
+        if (StringUtils.isBlank(daemonConfig.getScriptDir())) {
+            LOGGER.warn("Missing scriptDir property in configuration file. Will be using 'script' dir");
+            daemonConfig.setScriptDir("script");
+        }
+        Path batchPath = Paths.get(jarAbsolutePath + File.separator + daemonConfig.getScriptDir() + File.separator);
+        LOGGER.info("Script location:" + batchPath);
 
-		while (true) {
-			deamon.run();
-			Thread.sleep(10000);
-		}
+        try {
+            Files.createDirectories(batchPath);
+        } catch (IOException e) {
+            LOGGER.error("Coudln't create directory" + jarAbsolutePath);
+            e.printStackTrace();
+            System.exit(1);
+        }
 
-	}
+        // Initialise and run Daemon
+        FullConfiguration configuration = new FullConfiguration();
+        configuration.setUserConfiguration(daemonConfig);
+        configuration.setAbsPathHomeFolder(jarAbsolutePath.toString());
+        configuration.setAbsPathScriptFolder(configuration.getAbsPathHomeFolder() + File.separator + daemonConfig.getScriptDir() + File.separator);
+        Daemon deamon = new Daemon(configuration);
+        while (true) {
+            deamon.run();
+            Thread.sleep(10000);
+        }
+
+    }
 }
