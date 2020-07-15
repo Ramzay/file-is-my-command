@@ -2,19 +2,28 @@
 Execute commands using files
 
 # Introduction
-This project came to life when I wanted to control my computer using a voice recognition device (Alexa, Google assist etc.) and discovered the complexity of acheiving such a simple task.
+This project came to life when I wanted to control my computer using a voice recognition device (ex: Alexa, Google assist etc.) and discovered the complexity of acheiving such a simple task.
 
-What I discovered after some research was:
-- I needed to communicate via files in order to keep things simple and free
-- Use IFTT to create file in a drive folder (the voice recognition device will trigger IFTT receipes)
+What I discovered was:
+- I had to use an online file storage in order to make this project free of charge
+- Use files as a mean of communication
+- Use IFTTT to enable voice recognition device to interact with popular online drive storage (official website: https://ifttt.com/ )
 - Have an app that would check the drive folder and execute the <strong> desired and allowed </strong> tasks
+
+Here are the steps to make a voice recognition device interact with our PC:
+- User triggers a command using his voice: "Hey google trigger pc off"
+- Voice recognition device checks IFTTT for a known receipe
+- If a receipe is found the receipe will be executed (ex: put a file named "test.txt" in our dropbox drive)
+- On our PC we have our drive synchronized, so when something / someone adds a file in the drive it is downloaded automatically
+- An app, <strong>file-is-my-command</strong> will monitor the drive folder and if it finds "test.txt" it will run a shutdown script
+
 
 The goal of this app is to:
 
 - Monitor a folder where we put files in it (FTP, synchronized drive etc.), this folder is referred as <strong> command directory </strong>
-- When we detect that a file is a <strong> command </strong> we will delete the file and then perform the associated <strong> script </strong>.
-- All files located in the <strong> command directory </strong> are not necessarly commands, you are free to configure wich file should be considered as a command.
-- For security reasons command files are not executed, we only parse the file name.
+- When we detect that a file is a <strong> command </strong> we will delete the file and then perform the associated <strong> script </strong>
+- All files located in the <strong> command directory </strong> are not necessarly commands, you are free to configure wich file should be considered as a command
+- For security reasons command files are not executed, we only parse the file name
 
 # Installation and setup
 
