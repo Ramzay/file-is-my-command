@@ -2,7 +2,7 @@
 <Configuration status="INFO">
 
 	<Properties>
-		<Property name="logFileName">application-${date:yyyyMMdd}.log</Property>
+		<Property name="logFileName">fileIsMyCommand.log</Property>
 	</Properties>
 
 	<Appenders>
@@ -11,18 +11,18 @@
 			<PatternLayout pattern="%d{HH:mm:ss} [%level] - %msg%n" />
 		</Console>
 
-		<File name="FileAppender" fileName="${logFileName}"
-			immediateFlush="false" append="true">
+		<RandomAccessFile name="FileAppender"
+			fileName="${logFileName}" immediateFlush="false" append="false">
 			<PatternLayout
 				pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %level - %msg%n" />
-		</File>
+		</RandomAccessFile>
 	</Appenders>
 
 	<Loggers>
-		<Root level="debug">
+		<asyncRoot level="debug">
 			<AppenderRef ref="ConsoleAppender" />
 			<AppenderRef ref="FileAppender" />
-		</Root>
+		</asyncRoot>
 	</Loggers>
 
 </Configuration>

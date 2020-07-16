@@ -73,11 +73,13 @@ public class Application {
             LOGGER.error("Configuration file is either empty or malformed, exiting...");
             System.exit(1);
         }
+        
         // Create script directory
         if (StringUtils.isBlank(daemonConfig.getScriptDir())) {
             LOGGER.warn("Missing scriptDir property in configuration file. Will be using 'script' dir");
             daemonConfig.setScriptDir("script");
         }
+        
         Path batchPath = Paths.get(jarAbsolutePath + File.separator + daemonConfig.getScriptDir() + File.separator);
         LOGGER.info("Script location:" + batchPath);
 
@@ -94,9 +96,9 @@ public class Application {
         configuration.setUserConfiguration(daemonConfig);
         configuration.setAbsPathHomeFolder(jarAbsolutePath.toString());
         configuration.setAbsPathScriptFolder(configuration.getAbsPathHomeFolder() + File.separator + daemonConfig.getScriptDir() + File.separator);
-        Daemon deamon = new Daemon(configuration);
+        Daemon deamon = new Daemon();
         while (true) {
-            deamon.run();
+            deamon.run(configuration);
             Thread.sleep(10000);
         }
 

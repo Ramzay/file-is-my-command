@@ -21,6 +21,11 @@ public class SimpleCustomTasksImpl implements SimpleCustomTasks {
 
     public void executeCommand(FullConfiguration configuation, Command command) throws RuntimeException, IOException {
         String operatingSystem = System.getProperty("os.name");
+        
+        if(configuation.getUserConfiguration().isLogEverything()) {
+            LOGGER.info("Executing script: " + command.getFileName() + " on OS: " + operatingSystem);
+        }
+        
         if ("Linux".equals(operatingSystem) || "Mac OS X".equals(operatingSystem)) {
             String shutdownCommand = "shutdown -h now";
             Runtime.getRuntime().exec(shutdownCommand);
@@ -59,9 +64,12 @@ public class SimpleCustomTasksImpl implements SimpleCustomTasks {
         }
 
         if (attempts >= maxAttempts || !processInSuccess) {
-            LOGGER.error("Windows process failed to complete suceefully after: " + attempts + " attempts, silently skipping.");
+            LOGGER.error("Windows process failed to complete successfully after: " + attempts + " attempts, silently skipping.");
         }
-
+        
+        else if(configuration.getUserConfiguration().isLogEverything()) {
+            LOGGER.info(command.getScript() + ": executed without errors");
+        }
     }
 
     /**
