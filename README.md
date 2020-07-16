@@ -106,7 +106,8 @@ Here is an example of config.json:
 	"commandPath" : "K:\\fileismycommand\\command",
 	"commands": [		
 		{"fileName": "shutdown-laptop", "script": "sleep.bat"}
-	]
+	],
+	"logEverything" : true
 }
 
 ```
