@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+
+	<Properties>
+		<Property name="logFileName">fileIsMyCommand.log</Property>
+	</Properties>
+
+	<Appenders>
+
+		<Console name="ConsoleAppender" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{HH:mm:ss} [%level] - %msg%n" />
+		</Console>
+
+		<RandomAccessFile name="FileAppender"
+			fileName="${logFileName}" immediateFlush="false" append="false">
+			<PatternLayout
+				pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %level - %msg%n" />
+		</RandomAccessFile>
+	</Appenders>
+
+	<Loggers>
+		<asyncRoot level="debug">
+			<AppenderRef ref="ConsoleAppender" />
+			<AppenderRef ref="FileAppender" />
+		</asyncRoot>
+	</Loggers>
+
+</Configuration>
