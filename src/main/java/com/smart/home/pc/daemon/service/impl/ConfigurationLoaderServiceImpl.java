@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import com.google.gson.Gson;
 import com.smart.home.pc.daemon.dto.Config;
 import com.smart.home.pc.daemon.service.ConfigurationLoaderService;
+import com.smart.home.pc.daemon.util.FileHelper;
 
 public class ConfigurationLoaderServiceImpl implements ConfigurationLoaderService {
 
@@ -24,6 +25,12 @@ public class ConfigurationLoaderServiceImpl implements ConfigurationLoaderServic
     private Date configurationFileLastModifiedDate;
 
     private Config currentUserConfiguration;
+    
+    private FileHelper fileHelper = new FileHelper();
+    
+    public ConfigurationLoaderServiceImpl() {
+     
+    }
 
     public ConfigurationLoaderServiceImpl(String configurationPath) {
         loadConfiguration(configurationPath);
@@ -50,10 +57,9 @@ public class ConfigurationLoaderServiceImpl implements ConfigurationLoaderServic
 
     @Override
     public boolean isConfigurationUpdated(String configurationPath) {
-        File configFile = new File(configurationPath);
-        if (configurationPath != null && configFile != null) {
-            Date currentConfigDate = new Date(configFile.lastModified());
-            if (currentConfigDate.equals(configurationFileLastModifiedDate)) {
+        if (configurationPath != null) {
+            Date currentConfigDate = fileHelper.getFileLastModificationDate(configurationPath);
+            if (currentConfigDate != null && configurationFileLastModifiedDate != null && currentConfigDate.getTime() <= configurationFileLastModifiedDate.getTime()) {
                 return false;
             }
         }
