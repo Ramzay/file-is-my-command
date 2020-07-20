@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.smart.home</groupId>
 	<artifactId>file.is.my.command</artifactId>
-	<version>1.1-SNAPSHOT</version>
+	<version>1.2-SNAPSHOT</version>
 	<name>pc.daemon</name>
 	<packaging>jar</packaging>
 	<description>Daemon that will be installed on computers and will handle simple daily tasks</description>
@@ -80,6 +80,21 @@
 			<groupId>com.lmax</groupId>
 			<artifactId>disruptor</artifactId>
 			<version>3.4.2</version>
+		</dependency>
+
+
+		<!-- TEST SCOPE -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>2.23.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>

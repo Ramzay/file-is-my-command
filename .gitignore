@@ -33,3 +33,6 @@ build/
 .vscode/
 **script**
 *config.json
+
+### Logs ###
+*.log
