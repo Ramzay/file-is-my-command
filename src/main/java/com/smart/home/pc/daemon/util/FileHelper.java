@@ -22,9 +22,9 @@ import com.smart.home.pc.daemon.dto.Config;
  *
  */
 public class FileHelper {
-    
+
     private static final Logger LOGGER = LogManager.getLogger(FileHelper.class);
-    
+
     private Gson gson = new Gson();
 
     /**
@@ -45,7 +45,7 @@ public class FileHelper {
 
         return null;
     }
-    
+
     /**
      * Reads the configuration file as a Json and returns the corresponding object
      * 
@@ -64,9 +64,9 @@ public class FileHelper {
             userConfiguration = gson.fromJson(reader, Config.class);
             reader.close();
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            LOGGER.error("IOException while reading configuration file please check file format: " + configFilePath);
+            LOGGER.error("Exception while reading configuration file please check file format: " + configFilePath);
         }
 
         if (userConfiguration == null) {
