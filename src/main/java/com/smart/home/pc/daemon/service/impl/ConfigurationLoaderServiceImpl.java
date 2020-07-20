@@ -32,15 +32,17 @@ public class ConfigurationLoaderServiceImpl implements ConfigurationLoaderServic
         Date configurationPathLastModificationDate = fileHelper.getFileLastModificationDate(configurationPath);
         // Configuration is found and is a file.
         if (configurationPathLastModificationDate != null) {
-            configurationFileLastModifiedDate = configurationPathLastModificationDate;
             Config loadedConfiguration = fileHelper.getConfigurationFromPath(configurationPath);
             if (loadedConfiguration != null) {
+                configurationFileLastModifiedDate = configurationPathLastModificationDate;
                 currentUserConfiguration = loadedConfiguration;
                 return currentUserConfiguration;
+            } else {
+                LOGGER.error("Issue loading configuration file: " + configurationPath);
             }
         } else {
             // Configuration file not found or null
-            LOGGER.error("The provided configuration path was not found" + configurationPath);
+            LOGGER.error("The provided configuration path was not found: " + configurationPath);
         }
         return null;
     }
