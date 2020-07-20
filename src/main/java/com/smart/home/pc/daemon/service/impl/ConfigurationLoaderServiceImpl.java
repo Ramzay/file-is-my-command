@@ -25,11 +25,11 @@ public class ConfigurationLoaderServiceImpl implements ConfigurationLoaderServic
     private Date configurationFileLastModifiedDate;
 
     private Config currentUserConfiguration;
-    
+
     private FileHelper fileHelper = new FileHelper();
-    
+
     public ConfigurationLoaderServiceImpl() {
-     
+
     }
 
     public ConfigurationLoaderServiceImpl(String configurationPath) {
@@ -59,7 +59,7 @@ public class ConfigurationLoaderServiceImpl implements ConfigurationLoaderServic
     public boolean isConfigurationUpdated(String configurationPath) {
         if (configurationPath != null) {
             Date currentConfigDate = fileHelper.getFileLastModificationDate(configurationPath);
-            if (currentConfigDate != null && configurationFileLastModifiedDate != null && currentConfigDate.getTime() <= configurationFileLastModifiedDate.getTime()) {
+            if (currentConfigDate == null || currentConfigDate.equals(configurationFileLastModifiedDate)) {
                 return false;
             }
         }

@@ -22,32 +22,43 @@ public class ConfigurationLoaderServiceTest {
     FileHelper fileHelper;
 
     @Test
-    public void isConfigurationUpdatedNewConfiguration() {
-        // New configuration (nothing prior)
+    public void isConfigurationUpdatedTest() {
+        // Initial configuration, new configuration has a last modification date (file FOUND)
+        configurationLoaderServiceImpl.setConfigurationLoadDate(null);
+        Mockito.when(fileHelper.getFileLastModificationDate("")).thenReturn(new Date());
         Assert.assertTrue(configurationLoaderServiceImpl.isConfigurationUpdated(""));
-
-        // New configuration (current configuration was previously set)
-        configurationLoaderServiceImpl.setConfigurationLoadDate(new Date());
-        Assert.assertTrue(configurationLoaderServiceImpl.isConfigurationUpdated(""));
-
-        // No new configuration (same date of modification)
-        Date lastModificationDate = new Date();
-        configurationLoaderServiceImpl.setConfigurationLoadDate(lastModificationDate); // Set last modification
-        Mockito.when(fileHelper.getFileLastModificationDate("")).thenReturn(lastModificationDate); // Mock response of file helper to the same date
+        
+        // Initial configuration, new configuration has no modification date (file NOT FOUND)
+        configurationLoaderServiceImpl.setConfigurationLoadDate(null);
+        Mockito.when(fileHelper.getFileLastModificationDate("")).thenReturn(null);
         Assert.assertFalse(configurationLoaderServiceImpl.isConfigurationUpdated(""));
 
-       
+        /*
+         * Initial configuration is SET we will play with the new configuration last
+         * modification test
+         */
+        Date lastModificationDate = new Date();
         Date before = new Date(lastModificationDate.getTime() - 10);
         Date after = new Date(lastModificationDate.getTime());
-       
-        // last modification is in the future so we should not update the configuration
-        configurationLoaderServiceImpl.setConfigurationLoadDate(after); // Set last modification
-        Mockito.when(fileHelper.getFileLastModificationDate("")).thenReturn(before); 
+
+        // New configuration file modification date is same as initial configuration
+        configurationLoaderServiceImpl.setConfigurationLoadDate(lastModificationDate); 
+        Mockito.when(fileHelper.getFileLastModificationDate("")).thenReturn(lastModificationDate);
         Assert.assertFalse(configurationLoaderServiceImpl.isConfigurationUpdated(""));
 
-        // last modification is in the past so we should update the configuration
+        // New configuration file modification date is null
+        configurationLoaderServiceImpl.setConfigurationLoadDate(new Date());
+        Mockito.when(fileHelper.getFileLastModificationDate("")).thenReturn(null);
+        Assert.assertFalse(configurationLoaderServiceImpl.isConfigurationUpdated(""));
+
+        // New configuration last modification is in the future
+        configurationLoaderServiceImpl.setConfigurationLoadDate(after); // Set last modification
+        Mockito.when(fileHelper.getFileLastModificationDate("")).thenReturn(before);
+        Assert.assertTrue(configurationLoaderServiceImpl.isConfigurationUpdated(""));
+
+        // New configuration last modification is in the past
         configurationLoaderServiceImpl.setConfigurationLoadDate(before); // Set last modification
-        Mockito.when(fileHelper.getFileLastModificationDate("")).thenReturn(after); 
+        Mockito.when(fileHelper.getFileLastModificationDate("")).thenReturn(after);
         Assert.assertTrue(configurationLoaderServiceImpl.isConfigurationUpdated(""));
 
     }
